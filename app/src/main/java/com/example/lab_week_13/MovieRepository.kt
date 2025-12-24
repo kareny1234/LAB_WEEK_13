@@ -6,12 +6,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 
-class MovieRepository(private val movieService: MovieService) {
-
-    private val apiKey = "PASTE_API_KEY_TMDB_KAMU"
+class MovieRepository(
+    private val service: MovieService
+) {
+    private val apiKey = "ISI_API_KEY_TMDB_KAMU"
 
     fun fetchMovies(): Flow<List<Movie>> = flow {
-        val response = movieService.getPopularMovies(apiKey)
-        emit(response.results)
+        val movies = service.getPopularMovies(apiKey).results
+        emit(movies.sortedByDescending { it.popularity })
     }.flowOn(Dispatchers.IO)
 }
