@@ -2,10 +2,15 @@ package com.example.lab_week_12
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,13 +19,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val recyclerView: RecyclerView = findViewById(R.id.movie_list)
-
-        recyclerView.layoutManager =
-            androidx.recyclerview.widget.LinearLayoutManager(this)
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         val movieAdapter = MovieAdapter()
         recyclerView.adapter = movieAdapter
-
 
         val repository =
             (application as MovieApplication).movieRepository
@@ -34,13 +36,28 @@ class MainActivity : AppCompatActivity() {
             }
         )[MovieViewModel::class.java]
 
-        viewModel.popularMovies.observe(this) {
-            movieAdapter.addMovies(it)
-        }
+        // ✅ COLLECT STATEFLOW (Bukan observe)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        viewModel.error.observe(this) {
-            if (it.isNotEmpty())
-                Snackbar.make(recyclerView, it, Snackbar.LENGTH_LONG).show()
+                launch {
+                    viewModel.popularMovies.collect { movies ->
+                        movieAdapter.addMovies(movies)
+                    }
+                }
+
+                launch {
+                    viewModel.error.collect { error ->
+                        if (error.isNotEmpty()) {
+                            Snackbar.make(
+                                recyclerView,
+                                error,
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                }
+            }
         }
     }
 }
