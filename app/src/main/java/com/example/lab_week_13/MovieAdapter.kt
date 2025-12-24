@@ -1,11 +1,11 @@
-package com.example.lab_week_12
+package com.example.lab_week_13
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.lab_week_12.model.Movie
+import com.example.lab_week_13.model.Movie
 
 class MovieAdapter :
     RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {

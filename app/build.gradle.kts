@@ -1,14 +1,15 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
 }
 
 android {
-    namespace = "com.example.lab_week_12"
+    namespace = "com.example.lab_week_13"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.lab_week_12"
+        applicationId = "com.example.LAB_WEEK_13"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -26,6 +27,10 @@ android {
             )
         }
     }
+    buildFeatures {
+        dataBinding = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
