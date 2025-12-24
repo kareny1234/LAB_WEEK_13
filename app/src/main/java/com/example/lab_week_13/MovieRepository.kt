@@ -23,3 +23,7 @@ class MovieRepository(
     }.flowOn(Dispatchers.IO)
 }
 
+suspend fun refreshMovies() {
+    val movies = service.getPopularMovies(apiKey).results
+    database.movieDao().addMovies(movies)
+}
