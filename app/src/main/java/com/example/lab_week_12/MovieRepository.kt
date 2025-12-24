@@ -1,25 +1,17 @@
 package com.example.lab_week_12
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.lab_week_12.model.Movie
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class MovieRepository(private val movieService: MovieService) {
 
-    private val apiKey = "ISI_API_KEY_KAMU_DI_SINI"
+    private val apiKey = "PASTE_API_KEY_TMDB_KAMU"
 
-    private val _movies = MutableLiveData<List<Movie>>()
-    val movies: LiveData<List<Movie>> = _movies
-
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String> = _error
-
-    suspend fun fetchMovies() {
-        try {
-            val response = movieService.getPopularMovies(apiKey)
-            _movies.postValue(response.results)
-        } catch (e: Exception) {
-            _error.postValue(e.message ?: "Unknown error")
-        }
-    }
+    fun fetchMovies(): Flow<List<Movie>> = flow {
+        val response = movieService.getPopularMovies(apiKey)
+        emit(response.results)
+    }.flowOn(Dispatchers.IO)
 }
